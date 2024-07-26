@@ -1,0 +1,16 @@
+---
+// src/components/PictureWrapper.astro
+import { Picture } from 'astro:assets';
+import die1 from '../assets/1.png';
+import die2 from '../assets/2.png';
+import die3 from '../assets/3.png';
+import die4 from '../assets/4.png';
+import die5 from '../assets/5.png';
+import die6 from '../assets/6.png';
+
+const dieImages = [die1, die2, die3, die4, die5, die6];
+---
+
+{dieImages.map((src, index) => (
+  <Picture src={src} alt={`Die ${index + 1}`} />
+))}
