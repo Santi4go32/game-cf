@@ -184,8 +184,12 @@ const Board = () => {
           {renderSquares(9, 'vertical', 11)}
         </div>
         <div className="center">
-          <div className="extra-square top-left"></div>
-          <div className="extra-square bottom-right"></div>
+          <div className="extra-square top-left">
+            <img src="/chest.jpg" alt="Chest" />
+          </div>
+          <div className="extra-square bottom-right">
+            <img src="/chance.webp" alt="Chance" />
+          </div>
           <div className="dice-container flex-col">
             <div className="dice">
               <img src={`/${firstDieResult}.png`} alt="First Die" className='die'/>
