@@ -1,14 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import Square from './Square';
+import Modal from './Modal';
+import ResultModal from './ResultModal';
+import questions from './question';
 
 const messages = [
-  'Go', '#1', '#2', '#3', '#4', '#5', '#6', '#7', '#8', '#9', 'Jail',
-  '#10', '#11', '#12', '#13', '#14', '#15', '#16', '#17', '#18', '#19',
-  '#20', '#21', '#22', '#23', '#24', '#25', '#26', '#27', '#28', '#29',
-  '#30', '#31', '#32', '#33', '#34', '#35', '#36', '#37', '#38',
+  { text: 'Go', image: null },
+  { text: '#1', image: null },
+  { text: '#2', image: 'question.gif' },
+  { text: '#3', image: null },
+  { text: '#4', image: null },
+  { text: '#5', image: null },
+  { text: '#6', image: 'chest.webp' },
+  { text: '#7', image: null },
+  { text: '#8', image: 'water.jpg' },
+  { text: '#9', image: null },
+  { text: 'Jail', image: null},
+  { text: '#10', image: null },
+  { text: '#11', image: null },
+  { text: '#12', image: null },
+  { text: '#13', image: null },
+  { text: '#14', image: 'chest2.webp' },
+  { text: '#15', image: 'chest3.webp' },
+  { text: '#16', image: 'question2.gif'  },
+  { text: '#17', image: null },
+  { text: '#18', image: null },
+  { text: '#19', image: null },
+  { text: '#20', image: null },
+  { text: '#21', image: 'question3.gif'  },
+  { text: '#22', image: null },
+  { text: '#23', image: null },
+  { text: '#24', image: 'electric.jpg' },
+  { text: '#25', image: 'luxur.webp' },
+  { text: '#26', image: null },
+  { text: '#27', image: null },
+  { text: '#28', image: null },
+  { text: '#29', image: null },
+  { text: '#30', image: null },
+  { text: '#31', image: 'question.gif'  },
+  { text: '#32', image: null },
+  { text: '#33', image: null },
+  { text: '#34', image: 'tax.png' },
+  { text: '#35', image: null },
+  { text: '#36', image: 'chest.webp' },
+  { text: '#37', image: null },
+  { text: '#38', image: null },
 ];
 
 const specialIndices = [10, 12, 14, 16, 18, 20, 22, 24, 26];
+const questionIndices = [2, 17, 22, 32];
+
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
 
 const Board = () => {
   const [firstDieResult, setFirstDieResult] = useState(1);
@@ -16,10 +64,22 @@ const Board = () => {
   const [position, setPosition] = useState(0);
   const [stepsRemaining, setStepsRemaining] = useState(0);
   const [isMoving, setIsMoving] = useState(false);
+  const [total, setTotal] = useState(10000);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [isCorrect, setIsCorrect] = useState(null);
+
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+  const [resultMessage, setResultMessage] = useState('');
+
+  const [questionQueue, setQuestionQueue] = useState(shuffleArray([...questions]));
 
   useEffect(() => {
+    console.log(questionQueue);
     if (stepsRemaining > 0) {
-      setIsMoving(true); // Activar el estado de movimiento
+      setIsMoving(true);
 
       const intervalId = setInterval(() => {
         setPosition((prevPosition) => {
@@ -40,41 +100,79 @@ const Board = () => {
           } else {
             newPosition = (prevPosition + 1) % messages.length;
           }
-
+          console.log(newPosition);
           return newPosition;
         });
+        
 
         setStepsRemaining((prevSteps) => {
           const updatedSteps = prevSteps - 1;
           if (updatedSteps <= 0) {
-            setIsMoving(false); // Desactivar el estado de movimiento
+            setIsMoving(false); 
           }
           return updatedSteps;
         });
       }, 500);
 
       return () => clearInterval(intervalId);
+    } else if (stepsRemaining === 0 && questionIndices.includes(position)) {
+      setCurrentQuestion(questionQueue[0]);
+      setIsModalOpen(true);
     }
   }, [stepsRemaining]);
 
   const rollDice = () => {
     const newFirstDie = Math.floor(Math.random() * 6) + 1;
     const newSecondDie = Math.floor(Math.random() * 6) + 1;
-    setFirstDieResult(newFirstDie);
-    setSecondDieResult(newSecondDie);
-    setStepsRemaining(newFirstDie + newSecondDie);
+    setFirstDieResult(1);
+    setSecondDieResult(1);
+    setStepsRemaining(2);
   };
+
+  const handleAnswerSelect = (index) => {
+    setSelectedAnswer(index);
+    const correct = index === currentQuestion.correct;
+    setIsCorrect(correct);
+
+    if (correct) {
+      setTotal(total + 100);
+      setResultMessage('¡Felicitaciones, acabas de ganar $100!');
+    } else {
+      setTotal(total - 100);
+      setResultMessage('Respuesta incorrecta. Se restarán $100.');
+    }
+
+    setTimeout(() => {
+      setIsModalOpen(false);
+      setIsResultModalOpen(true);
+      setQuestionQueue((prevQueue) => {
+        const newQueue = [...prevQueue.slice(1), prevQueue[0]];
+        return newQueue;
+      });
+    }, 100);
+  };
+
+  const closeResultModal = () => {
+    setIsResultModalOpen(false);
+  };
+  
 
   const renderSquares = (count, type, startIndex) => {
     return [...Array(count)].map((_, index) => (
-      <Square key={startIndex + index} type={type} message={messages[startIndex + index]} isPlayerHere={startIndex + index === position} index={startIndex+index} />
+      <Square 
+        key={startIndex + index} 
+        type={type} 
+        message={messages[startIndex + index]} 
+        isPlayerHere={startIndex + index === position} 
+        index={startIndex + index} 
+      />
     ));
   };
 
   return (
     <>
-      <div className="mb-2 font-bold" style={{ marginLeft: '52%' }}>
-        <h1>Total: $10,000</h1>
+      <div className="mb-2 font-bold" style={{ marginLeft: '42%' }}>
+        <h1>Total: ${total.toLocaleString()}</h1>
       </div>
       <div className="board">
         <div className="corner top-left">{renderSquares(1, 'corner', 0)}</div>
@@ -86,6 +184,8 @@ const Board = () => {
           {renderSquares(9, 'vertical', 11)}
         </div>
         <div className="center">
+          <div className="extra-square top-left"></div>
+          <div className="extra-square bottom-right"></div>
           <div className="dice-container flex-col">
             <div className="dice">
               <img src={`/${firstDieResult}.png`} alt="First Die" className='die'/>
@@ -93,7 +193,7 @@ const Board = () => {
             </div>
             <div className="controls">
               <span style={{ fontSize: 'calc(16px + 2vmin)', fontWeight: 'bold', color: 'white' }}>{firstDieResult + secondDieResult}</span>
-              <button onClick={rollDice} className='button' disabled={isMoving}>Roll</button>
+              <button onClick={rollDice} className='button' disabled={stepsRemaining > 0}>Roll</button>
             </div>
           </div>
         </div>
@@ -106,6 +206,18 @@ const Board = () => {
         </div>
         <div className="corner bottom-right">{renderSquares(1, 'corner', 39)}</div>
       </div>
+      <Modal
+        isModalOpen={isModalOpen}
+        currentQuestion={currentQuestion}
+        selectedAnswer={selectedAnswer}
+        isCorrect={isCorrect}
+        handleAnswerSelect={handleAnswerSelect}
+      />
+      <ResultModal
+        isResultModalOpen={isResultModalOpen}
+        resultMessage={resultMessage}
+        closeResultModal={closeResultModal}
+      />
     </>
   );
 };
