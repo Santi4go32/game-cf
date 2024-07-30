@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Square from './Square';
 import Modal from './Modal';
 import ResultModal from './ResultModal';
+import InvestmentModal from './InvestmentModal';
 import questions from './question';
-import {boards} from './boards'
+import { boards } from './boards';
 
 const specialIndices = [4, 6, 8];
 
@@ -17,11 +18,11 @@ const shuffleArray = (array) => {
 
 const Board = () => {
   const [firstDieResult, setFirstDieResult] = useState(1);
-  const [secondDieResult, setSecondDieResult] = useState(1);
   const [position, setPosition] = useState(0);
   const [stepsRemaining, setStepsRemaining] = useState(0);
   const [isMoving, setIsMoving] = useState(false);
   const [total, setTotal] = useState(10000);
+  const [lives, setLives] = useState(3);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -31,9 +32,12 @@ const Board = () => {
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [resultMessage, setResultMessage] = useState('');
 
+  const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false);
+
   const [questionQueue, setQuestionQueue] = useState(shuffleArray([...questions]));
 
   const [currentBoardIndex, setCurrentBoardIndex] = useState(0);
+  const [lastTotalAtGo, setLastTotalAtGo] = useState(total); 
 
   const currentBoard = boards[currentBoardIndex];
   const questionIndices = currentBoard.questionIndices;
@@ -66,9 +70,17 @@ const Board = () => {
 
           if (newPosition === 0 && prevPosition !== 0) {
             if (currentBoardIndex < boards.length - 1) {
-              setCurrentBoardIndex((prevIndex) => prevIndex + 1);
-              setStepsRemaining(0);
-              return 0;
+              console.log("lol")
+              if (total <= lastTotalAtGo + lastTotalAtGo * 0.1) {
+                setLives((prevLives) => prevLives - 1);
+              }
+              else
+              {
+                setCurrentBoardIndex((prevIndex) => prevIndex + 1);
+                setLastTotalAtGo(total);
+                setStepsRemaining(0);
+                setLives(3);
+              }
             } else {
               return newPosition;
             }
@@ -95,10 +107,8 @@ const Board = () => {
 
   const rollDice = () => {
     const newFirstDie = Math.floor(Math.random() * 6) + 1;
-    const newSecondDie = Math.floor(Math.random() * 6) + 1;
     setFirstDieResult(newFirstDie);
-    setSecondDieResult(newSecondDie);
-    setStepsRemaining(newFirstDie + newSecondDie);
+    setStepsRemaining(newFirstDie);
   };
 
   const handleAnswerSelect = (index) => {
@@ -128,6 +138,29 @@ const Board = () => {
     setIsResultModalOpen(false);
   };
 
+  const handleInvestmentDecision = (decision) => {
+    if (decision === 'yes') {
+      setTotal((prevTotal) => prevTotal * 1.05);
+    }
+    setIsInvestmentModalOpen(false);
+  };
+
+  useEffect(() => {
+    if (lives === 0) {
+      alert('Has perdido todas tus vidas. El nivel se reiniciará.');
+      setIsMoving(false);
+      setStepsRemaining(0);
+      setLives(3);
+      setTotal(lastTotalAtGo);
+    }
+  }, [lives]);
+
+  useEffect(() => {
+    if (!isMoving && currentBoard.squares[position].image === 'cf.png') {
+      setIsInvestmentModalOpen(true);
+    }
+  }, [isMoving, position]);
+
   const renderSquares = (count, type, startIndex) => {
     return [...Array(count)].map((_, index) => (
       <Square
@@ -140,10 +173,19 @@ const Board = () => {
     ));
   };
 
+  const renderHearts = () => {
+    return [...Array(lives)].map((_, index) => (
+      <img key={index} src="/heart.png" alt="Heart" style={{ width: '30px', marginRight: '5px' }} />
+    ));
+  };
+
   return (
     <>
-      <div className="mb-2 font-bold" style={{ marginLeft: '36%' }}>
-        <h1>Total: ${total.toLocaleString()}</h1>
+      <div className="mb-2 font-bold flex flex-row">
+        <h1>Total: ${total.toLocaleString()} de ${(lastTotalAtGo + lastTotalAtGo * 0.1).toLocaleString()}</h1>
+        <div className="ml-10" style={{ display: 'flex', justifyContent: 'center' }}>
+          {renderHearts()}
+        </div>
       </div>
       <div className="board">
         <div className="corner top-left">{renderSquares(1, 'corner', 0)}</div>
@@ -160,11 +202,10 @@ const Board = () => {
           <div className="dice-container">
             <div className="dice">
               <img src={`/${firstDieResult}.png`} alt="First Die" className="die" />
-              <img src={`/${secondDieResult}.png`} alt="Second Die" className="die" />
             </div>
             <div className="controls">
               <span style={{ fontSize: 'calc(16px + 2vmin)', fontWeight: 'bold', color: 'white' }}>
-                {firstDieResult + secondDieResult}
+                {firstDieResult}
               </span>
               <button onClick={rollDice} className="button" disabled={isMoving}>
                 Roll
@@ -188,6 +229,10 @@ const Board = () => {
         isResultModalOpen={isResultModalOpen}
         resultMessage={resultMessage}
         closeResultModal={closeResultModal}
+      />
+      <InvestmentModal
+        isInvestmentModalOpen={isInvestmentModalOpen}
+        handleInvestmentDecision={handleInvestmentDecision}
       />
     </>
   );
