@@ -41,7 +41,7 @@ const Board = () => {
 
   const [questionQueue, setQuestionQueue] = useState(shuffleArray([...questions]));
 
-  const [currentBoardIndex, setCurrentBoardIndex] = useState(2);
+  const [currentBoardIndex, setCurrentBoardIndex] = useState(0);
   const [lastTotalAtGo, setLastTotalAtGo] = useState(total); 
   const [isWinner, setIsWinner] = useState(false);
 
