@@ -212,7 +212,7 @@ const Board = () => {
       </div>
 
       {isWinner ? (
-        <div className="winner-message">
+        <div>
           <h1 style={{ color: 'gold', fontSize: '3em', textAlign: 'center' }}>¡Eres un ganador!</h1>
           <p style={{ fontSize: '1.5em', textAlign: 'center' }}>Has completado todos los niveles y alcanzado el objetivo final. ¡Felicidades!</p>
         </div>
