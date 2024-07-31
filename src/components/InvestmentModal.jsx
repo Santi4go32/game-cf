@@ -5,7 +5,7 @@ const InvestmentModal = ({ isInvestmentModalOpen, message, additionalInfo, color
 
   return (
     <div className="modal">
-      <div className="investment-modal-content" style={{backgroundColor:`${bgColor}`, color: `${colorText}`}}>
+      <div className="investment-modal-content" style={{backgroundColor:bgColor, color: colorText}}>
         <h2 className="font-bold">{message}</h2>
         {additionalInfo && <p>{additionalInfo}</p>}
         <button className="button mr-3" onClick={() => handleInvestmentDecision('yes')}>Sí</button>
