@@ -41,7 +41,7 @@ const Board = () => {
 
   const [questionQueue, setQuestionQueue] = useState(shuffleArray([...questions]));
 
-  const [currentBoardIndex, setCurrentBoardIndex] = useState(0);
+  const [currentBoardIndex, setCurrentBoardIndex] = useState(2);
   const [lastTotalAtGo, setLastTotalAtGo] = useState(total); 
   const [isWinner, setIsWinner] = useState(false);
 
@@ -75,7 +75,7 @@ const Board = () => {
           }
 
           if (newPosition === 0 && prevPosition !== 0) {
-            if (currentBoardIndex < boards.length - 1) {
+            if (currentBoardIndex <= boards.length - 1) {
               if (total < lastTotalAtGo + lastTotalAtGo * 0.1) {
                 setLives((prevLives) => prevLives - 1);
               }
