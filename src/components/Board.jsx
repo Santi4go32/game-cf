@@ -75,7 +75,7 @@ const Board = () => {
           }
 
           if (newPosition === 0 && prevPosition !== 0) {
-            if (currentBoardIndex <= boards.length - 1) {
+            if (currentBoardIndex < boards.length - 1) {
               if (total < lastTotalAtGo + lastTotalAtGo * 0.1) {
                 setLives((prevLives) => prevLives - 1);
               }
@@ -92,9 +92,11 @@ const Board = () => {
                 setIsWinner(true);
                 setIsMoving(false);
                 setStepsRemaining(0);
+              } else {
+                setLives((prevLives) => prevLives - 1);
               }
-              return newPosition;
             }
+            return newPosition;
           }
 
           return newPosition;
