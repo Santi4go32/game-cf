@@ -5,6 +5,7 @@ import ResultModal from './ResultModal';
 import InvestmentModal from './InvestmentModal';
 import questions from './question';
 import { boards } from './boards';
+import { handleSquareActions } from './squareActions';
 
 const specialIndices = [4, 6, 8];
 
@@ -33,11 +34,16 @@ const Board = () => {
   const [resultMessage, setResultMessage] = useState('');
 
   const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false);
+  const [investmentMessage, setInvestmentMessage] = useState('');
+  const [additionalInfo, setAdditionalInfo] = useState(null);
+  const [colorText, setColorText] = useState('black');
+  const [bgColor, setBgColor] = useState('white');
 
   const [questionQueue, setQuestionQueue] = useState(shuffleArray([...questions]));
 
   const [currentBoardIndex, setCurrentBoardIndex] = useState(0);
   const [lastTotalAtGo, setLastTotalAtGo] = useState(total); 
+  const [isWinner, setIsWinner] = useState(false);
 
   const currentBoard = boards[currentBoardIndex];
   const questionIndices = currentBoard.questionIndices;
@@ -70,18 +76,23 @@ const Board = () => {
 
           if (newPosition === 0 && prevPosition !== 0) {
             if (currentBoardIndex < boards.length - 1) {
-              console.log("lol")
-              if (total <= lastTotalAtGo + lastTotalAtGo * 0.1) {
+              if (total < lastTotalAtGo + lastTotalAtGo * 0.1) {
                 setLives((prevLives) => prevLives - 1);
               }
               else
               {
                 setCurrentBoardIndex((prevIndex) => prevIndex + 1);
+                setIsMoving(false);
                 setLastTotalAtGo(total);
                 setStepsRemaining(0);
                 setLives(3);
               }
             } else {
+              if (total >= lastTotalAtGo + lastTotalAtGo * 0.1) {
+                setIsWinner(true);
+                setIsMoving(false);
+                setStepsRemaining(0);
+              }
               return newPosition;
             }
           }
@@ -139,8 +150,18 @@ const Board = () => {
   };
 
   const handleInvestmentDecision = (decision) => {
-    if (decision === 'yes') {
-      setTotal((prevTotal) => prevTotal * 1.05);
+    if (investmentMessage === '¿Deseas invertir en Capital Fund?') {
+      if (decision === 'yes') {
+        setTotal((prevTotal) => prevTotal * 1.05);
+      }
+    } else {
+      if (decision === 'yes') {
+        if (investmentMessage === '¿Deseas entrar al Cine?') {
+          setTotal((prevTotal) => prevTotal - 30);
+        } else if (investmentMessage === '¿Te encantaría comprar vestimenta?') {
+          setTotal((prevTotal) => prevTotal - 300);
+        }
+      }
     }
     setIsInvestmentModalOpen(false);
   };
@@ -156,10 +177,11 @@ const Board = () => {
   }, [lives]);
 
   useEffect(() => {
-    if (!isMoving && currentBoard.squares[position].image === 'cf.png') {
-      setIsInvestmentModalOpen(true);
+    if (!isMoving) {
+      const currentSquare = currentBoard.squares[position];
+      handleSquareActions(currentSquare, setTotal, setColorText, setBgColor, setIsInvestmentModalOpen, setInvestmentMessage, setAdditionalInfo);
     }
-  }, [isMoving, position]);
+  }, [isMoving, position, currentBoard.squares]);
 
   const renderSquares = (count, type, startIndex) => {
     return [...Array(count)].map((_, index) => (
@@ -182,58 +204,71 @@ const Board = () => {
   return (
     <>
       <div className="mb-2 font-bold flex flex-row">
+        <h1 className='mr-16'>Nivel: {(currentBoardIndex+1).toLocaleString()}</h1>
         <h1>Total: ${total.toLocaleString()} de ${(lastTotalAtGo + lastTotalAtGo * 0.1).toLocaleString()}</h1>
-        <div className="ml-10" style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="ml-16" style={{ display: 'flex', justifyContent: 'center' }}>
           {renderHearts()}
         </div>
       </div>
-      <div className="board">
-        <div className="corner top-left">{renderSquares(1, 'corner', 0)}</div>
-        <div className="top-row">{renderSquares(3, 'horizontal', 1)}</div>
-        <div className="corner top-right">{renderSquares(1, 'corner', 4)}</div>
-        <div className="left-column">{renderSquares(3, 'vertical', 5)}</div>
-        <div className="center">
-          <div className="extra-square top-left">
-            <img src="/chest.jpg" alt="Chest" />
-          </div>
-          <div className="extra-square bottom-right">
-            <img src="/chance.webp" alt="Chance" />
-          </div>
-          <div className="dice-container">
-            <div className="dice">
-              <img src={`/${firstDieResult}.png`} alt="First Die" className="die" />
-            </div>
-            <div className="controls">
-              <span style={{ fontSize: 'calc(16px + 2vmin)', fontWeight: 'bold', color: 'white' }}>
-                {firstDieResult}
-              </span>
-              <button onClick={rollDice} className="button" disabled={isMoving}>
-                Roll
-              </button>
-            </div>
-          </div>
+
+      {isWinner ? (
+        <div className="winner-message">
+          <h1 style={{ color: 'gold', fontSize: '3em', textAlign: 'center' }}>¡Eres un ganador!</h1>
+          <p style={{ fontSize: '1.5em', textAlign: 'center' }}>Has completado todos los niveles y alcanzado el objetivo final. ¡Felicidades!</p>
         </div>
-        <div className="right-column">{renderSquares(3, 'vertical', 8)}</div>
-        <div className="corner bottom-left">{renderSquares(1, 'corner', 11)}</div>
-        <div className="bottom-row">{renderSquares(3, 'horizontal', 12)}</div>
-        <div className="corner bottom-right">{renderSquares(1, 'corner', 15)}</div>
-      </div>
-      <Modal
-        isModalOpen={isModalOpen}
-        currentQuestion={currentQuestion}
-        selectedAnswer={selectedAnswer}
-        isCorrect={isCorrect}
-        handleAnswerSelect={handleAnswerSelect}
-      />
-      <ResultModal
-        isResultModalOpen={isResultModalOpen}
-        resultMessage={resultMessage}
-        closeResultModal={closeResultModal}
-      />
-      <InvestmentModal
-        isInvestmentModalOpen={isInvestmentModalOpen}
-        handleInvestmentDecision={handleInvestmentDecision}
-      />
+      ) : (
+        <div className="board">
+          <div className="corner top-left">{renderSquares(1, 'corner', 0)}</div>
+          <div className="top-row">{renderSquares(3, 'horizontal', 1)}</div>
+          <div className="corner top-right">{renderSquares(1, 'corner', 4)}</div>
+          <div className="left-column">{renderSquares(3, 'vertical', 5)}</div>
+          <div className="center">
+            <div className="extra-square top-left">
+              <img src="/chest.jpg" alt="Chest" />
+            </div>
+            <div className="extra-square bottom-right">
+              <img src="/chance.webp" alt="Chance" />
+            </div>
+            <div className="dice-container">
+              <div className="dice">
+                <img src={`/${firstDieResult}.png`} alt="First Die" className="die" />
+              </div>
+              <div className="controls">
+                <span style={{ fontSize: 'calc(16px + 2vmin)', fontWeight: 'bold', color: 'white' }}>
+                  {firstDieResult}
+                </span>
+                <button onClick={rollDice} className="button" disabled={isMoving}>
+                  Roll
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="right-column">{renderSquares(3, 'vertical', 8)}</div>
+          <div className="corner bottom-left">{renderSquares(1, 'corner', 11)}</div>
+          <div className="bottom-row">{renderSquares(3, 'horizontal', 12)}</div>
+          <div className="corner bottom-right">{renderSquares(1, 'corner', 15)}</div>
+        </div>
+    )}
+        <Modal
+          isModalOpen={isModalOpen}
+          currentQuestion={currentQuestion}
+          selectedAnswer={selectedAnswer}
+          isCorrect={isCorrect}
+          handleAnswerSelect={handleAnswerSelect}
+        />
+        <ResultModal
+          isResultModalOpen={isResultModalOpen}
+          resultMessage={resultMessage}
+          closeResultModal={closeResultModal}
+        />
+        <InvestmentModal
+          isInvestmentModalOpen={isInvestmentModalOpen}
+          message={investmentMessage}
+          additionalInfo={additionalInfo}
+          colorText={colorText}
+          bgColor={bgColor}
+          handleInvestmentDecision={handleInvestmentDecision}
+        />
     </>
   );
 };
