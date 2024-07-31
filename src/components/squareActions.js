@@ -7,7 +7,7 @@ export const handleSquareActions = (currentSquare, setTotal, setColorText, setBg
         setBgColor('#0e1b4d');
         setIsInvestmentModalOpen(true);
         break;
-      case 'tax.png':
+      case 'tax.jpg':
       case 'luxur.webp':
         setTotal((prevTotal) => prevTotal - 100);
         break;

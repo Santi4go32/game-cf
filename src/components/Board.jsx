@@ -121,7 +121,7 @@ const Board = () => {
   const rollDice = () => {
     const newFirstDie = Math.floor(Math.random() * 6) + 1;
     setFirstDieResult(newFirstDie);
-    setStepsRemaining(newFirstDie);
+    setStepsRemaining(4);
   };
 
   const handleAnswerSelect = (index) => {
