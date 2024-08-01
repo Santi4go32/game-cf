@@ -173,7 +173,7 @@ const Board = () => {
     if (lives === 0) {
       // alert('Has perdido todas tus vidas. El nivel se reiniciará.');
       // setIsMoving(false);
-      // setStepsRemaining(0);
+      setStepsRemaining(0);
       // setLives(3);
       // setTotal(lastTotalAtGo);
       setIsLost(true);
