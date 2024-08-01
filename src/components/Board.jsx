@@ -23,7 +23,7 @@ const Board = () => {
   const [stepsRemaining, setStepsRemaining] = useState(0);
   const [isMoving, setIsMoving] = useState(false);
   const [total, setTotal] = useState(10000);
-  const [lives, setLives] = useState(3);
+  const [lives, setLives] = useState(1);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -44,6 +44,7 @@ const Board = () => {
   const [currentBoardIndex, setCurrentBoardIndex] = useState(0);
   const [lastTotalAtGo, setLastTotalAtGo] = useState(total); 
   const [isWinner, setIsWinner] = useState(false);
+  const [isLost, setIsLost] = useState(false);
 
   const currentBoard = boards[currentBoardIndex];
   const questionIndices = currentBoard.questionIndices;
@@ -121,7 +122,7 @@ const Board = () => {
   const rollDice = () => {
     const newFirstDie = Math.floor(Math.random() * 6) + 1;
     setFirstDieResult(newFirstDie);
-    setStepsRemaining(newFirstDie);
+    setStepsRemaining(16);
   };
 
   const handleAnswerSelect = (index) => {
@@ -170,11 +171,12 @@ const Board = () => {
 
   useEffect(() => {
     if (lives === 0) {
-      alert('Has perdido todas tus vidas. El nivel se reiniciará.');
-      setIsMoving(false);
-      setStepsRemaining(0);
-      setLives(3);
-      setTotal(lastTotalAtGo);
+      // alert('Has perdido todas tus vidas. El nivel se reiniciará.');
+      // setIsMoving(false);
+      // setStepsRemaining(0);
+      // setLives(3);
+      // setTotal(lastTotalAtGo);
+      setIsLost(true);
     }
   }, [lives]);
 
@@ -203,20 +205,32 @@ const Board = () => {
     ));
   };
 
+  const restartGame = () => {
+    window.location.reload();
+  };
+
   return (
     <>
-      <div className="mb-2 font-bold flex flex-row">
-        <h1 className='mr-16'>Nivel: {(currentBoardIndex+1).toLocaleString()}</h1>
-        <h1>Total: ${total.toLocaleString()} de ${(lastTotalAtGo + lastTotalAtGo * 0.1).toLocaleString()}</h1>
-        <div className="ml-16" style={{ display: 'flex', justifyContent: 'center' }}>
-          {renderHearts()}
+      {!isLost && (
+        <div className="mb-2 font-bold flex flex-row">
+          <h1 className='mr-16'>Nivel: {(currentBoardIndex+1).toLocaleString()}</h1>
+          <h1>Total: ${total.toLocaleString()} de ${(lastTotalAtGo + lastTotalAtGo * 0.1).toLocaleString()}</h1>
+          <div className="ml-16" style={{ display: 'flex', justifyContent: 'center' }}>
+            {renderHearts()}
+          </div>
         </div>
-      </div>
+      )}
 
       {isWinner ? (
         <div>
           <h1 style={{ color: 'gold', fontSize: '3em', textAlign: 'center' }}>¡Eres un ganador!</h1>
           <p style={{ fontSize: '1.5em', textAlign: 'center' }}>Has completado todos los niveles y alcanzado el objetivo final. ¡Felicidades!</p>
+        </div>
+      ) : isLost? (
+        <div>
+          <h1 style={{ color: 'red', fontSize: '3em', textAlign: 'center' }}>¡Has perdido!</h1>
+          <p style={{ fontSize: '1.5em', textAlign: 'center' }}>Perdiste todas tus vidas. ¿Deseas volver a intentarlo?</p>
+          <button style={{ display: 'block', margin: '20px auto', padding: '10px 20px', fontSize: '1.5em', border: '1px solid #000', borderRadius: '15px' }} onClick={restartGame}>Reiniciar</button>
         </div>
       ) : (
         <div className="board">
