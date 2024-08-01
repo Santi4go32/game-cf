@@ -23,7 +23,7 @@ const Board = () => {
   const [stepsRemaining, setStepsRemaining] = useState(0);
   const [isMoving, setIsMoving] = useState(false);
   const [total, setTotal] = useState(10000);
-  const [lives, setLives] = useState(1);
+  const [lives, setLives] = useState(3);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -122,7 +122,7 @@ const Board = () => {
   const rollDice = () => {
     const newFirstDie = Math.floor(Math.random() * 6) + 1;
     setFirstDieResult(newFirstDie);
-    setStepsRemaining(16);
+    setStepsRemaining(newFirstDie);
   };
 
   const handleAnswerSelect = (index) => {
