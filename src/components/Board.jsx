@@ -153,9 +153,9 @@ const Board = () => {
   };
 
   const handleInvestmentDecision = (decision) => {
-    if (investmentMessage === '¿Deseas invertir en Capital Fund?') {
+    if (additionalInfo.includes('5.49%')) {
       if (decision === 'yes') {
-        setTotal((prevTotal) => prevTotal * 1.05);
+        setTotal((prevTotal) => prevTotal * 1.0549);
       }
     } else {
       if (decision === 'yes') {
@@ -163,6 +163,10 @@ const Board = () => {
           setTotal((prevTotal) => prevTotal - 30);
         } else if (investmentMessage === '¿Te encantaría comprar vestimenta?') {
           setTotal((prevTotal) => prevTotal - 300);
+        } else if (additionalInfo.includes('8.8%')) {
+          setTotal((prevTotal) => prevTotal * 1.088);
+        } else if (additionalInfo.includes('17.5%')) {
+          setTotal((prevTotal) => prevTotal * 1.175);
         }
       }
     }
@@ -213,9 +217,9 @@ const Board = () => {
     <>
       {!isLost && (
         <div className="mb-2 font-bold flex flex-row">
-          <h1 className='mr-16'>Nivel: {(currentBoardIndex+1).toLocaleString()}</h1>
+          <h1 className='level'>Nivel: {(currentBoardIndex+1).toLocaleString()}</h1>
           <h1>Total: ${total.toLocaleString()} de ${(lastTotalAtGo + lastTotalAtGo * 0.1).toLocaleString()}</h1>
-          <div className="ml-16" style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className="heart" style={{ display: 'flex', justifyContent: 'center' }}>
             {renderHearts()}
           </div>
         </div>
