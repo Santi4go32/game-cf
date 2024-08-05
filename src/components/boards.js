@@ -16,9 +16,9 @@ export const boards = [
         { text: '#12', image: 'tax.jpg' },
         { text: '#13', image: 'cinema.jpg' },
         { text: '#14', image: 'cloth.jpg' },
-        { text: 'Jail', image: 'notary.jpg' },
+        { text: 'Jail', image: 'question1.jpg' },
       ],
-      questionIndices: [2, 7],
+      questionIndices: [2, 7, 15],
     },
     {
       squares: [

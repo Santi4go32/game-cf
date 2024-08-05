@@ -34,10 +34,10 @@ export const handleSquareActions = (currentSquare, setTotal, setColorText, setBg
       case 'chest3.webp':
       case 'chest2.webp':
       case 'chest.webp':
-        setTotal((prevTotal) => prevTotal + 100);
+        setTotal((prevTotal) => prevTotal + 200);
         break;
       case 'navidad.jpg':
-        setTotal((prevTotal) => prevTotal - 300);
+        setTotal((prevTotal) => prevTotal - 200);
         break;
       case 'jewelry.png':
         setTotal((prevTotal) => prevTotal * 1.02);
@@ -47,7 +47,7 @@ export const handleSquareActions = (currentSquare, setTotal, setColorText, setBg
         break;
       case 'bd-mom.webp':
       case 'bd-son.jpg':
-        setTotal((prevTotal) => prevTotal - 200);
+        setTotal((prevTotal) => prevTotal - 300);
         break;
       case 'study.jpg':
         setTotal((prevTotal) => prevTotal - 500);
@@ -56,7 +56,7 @@ export const handleSquareActions = (currentSquare, setTotal, setColorText, setBg
         setTotal((prevTotal) => prevTotal * 1.03);
         break;
       case 'health.jpg':
-        setTotal((prevTotal) => prevTotal - 400);
+        setTotal((prevTotal) => prevTotal - 500);
         break;
       case 'bienes.jpg':
         setTotal((prevTotal) => prevTotal * 1.04);
