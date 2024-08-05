@@ -161,8 +161,10 @@ const Board = () => {
       if (decision === 'yes') {
         if (investmentMessage === '¿Deseas entrar al Cine?') {
           setTotal((prevTotal) => prevTotal - 30);
-        } else if (investmentMessage === '¿Te encantaría comprar vestimenta?') {
+        } else if (investmentMessage === '¿Te encantaría comprar vestimenta?' && currentBoardIndex === 0) {
           setTotal((prevTotal) => prevTotal - 200);
+        } else if (investmentMessage === '¿Te encantaría comprar vestimenta?') {
+          setTotal((prevTotal) => prevTotal - 300);
         } else if (additionalInfo.includes('8.8%')) {
           setTotal((prevTotal) => prevTotal * 1.088);
         } else if (additionalInfo.includes('17.5%')) {
