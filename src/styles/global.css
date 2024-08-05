@@ -231,11 +231,11 @@ body {
 }
 
 .level {
-  margin-right: 64px;
+  margin-right: 44px;
 }
 
 .heart {
-  margin-left: 64px;
+  margin-left: 44px;
 }
 
 @media (max-width: 1024px) {

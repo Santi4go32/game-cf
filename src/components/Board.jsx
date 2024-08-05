@@ -220,7 +220,8 @@ const Board = () => {
       {!isLost && (
         <div className="mb-2 font-bold flex flex-row">
           <h1 className='level'>Nivel: {(currentBoardIndex+1).toLocaleString()}</h1>
-          <h1>Total: ${total.toLocaleString()} de ${(lastTotalAtGo + lastTotalAtGo * 0.1).toLocaleString()}</h1>
+          <h1>Capital: ${total.toLocaleString()}</h1>
+          <h1 className="ml-7">Meta: ${(lastTotalAtGo + lastTotalAtGo * 0.1).toLocaleString()}</h1>
           <div className="heart" style={{ display: 'flex', justifyContent: 'center' }}>
             {renderHearts()}
           </div>
