@@ -1,10 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Board from '../components/Board';
+import Board from '../components/Board/Board';
+import Navbar from '../components/Navbar/Navbar';
 import '../styles/global.css';
 ---
 
-<Layout title="QQ CAPITAL FUND - GAME">
+<Layout title="QQ Capital Fund - GAME">
+	<Navbar client:load/>
 	<Board client:load />
 </Layout>
 

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Square from './Square';
-import Modal from './Modal';
-import ResultModal from './ResultModal';
-import InvestmentModal from './InvestmentModal';
-import questions from './question';
-import { boards } from './boards';
-import { handleSquareActions } from './squareActions';
+import Modal from '../Modal/Modal';
+import ResultModal from '../Modal/ResultModal';
+import InvestmentModal from '../Modal/InvestmentModal';
+import questions from '../../Logic/question';
+import { boards } from '../../Logic/boards';
+import { handleSquareActions } from '../../Logic/squareActions';
 
 const specialIndices = [4, 6, 8];
 
@@ -48,6 +48,14 @@ const Board = () => {
 
   const currentBoard = boards[currentBoardIndex];
   const questionIndices = currentBoard.questionIndices;
+
+  useEffect(() => {
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+      window.location.href = "/login";
+    }
+  }, []);
+
 
   useEffect(() => {
     if (stepsRemaining > 0) {
