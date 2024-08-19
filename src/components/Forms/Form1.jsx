@@ -86,7 +86,7 @@ const QQLogin = () => {
                 </div>
             </form>
             <footer className="mt-8 text-center text-white text-sm py-4 font-bold">
-                Copyright ©2024 QQ Capital Fund. All rights reserved.
+                Copyright ©2024 Q&Q Capital Investment Fund. All rights reserved.
             </footer>
         </div>
     );
